@@ -1,0 +1,264 @@
+#:import SlideTransition kivy.uix.screenmanager.SlideTransition
+#:import Window  kivy.core.window.Window
+#:import XCamera  kivy_garden.xcamera.XCamera
+
+
+ScreenManager:
+    GetStarted:
+    Intro:
+    CameraClick:
+    Gallery:
+    Output:
+    Not_Leaf:
+    Result:
+
+<GetStarted>:
+    name: 'get'
+    Image:
+        source: 'plant1.jpg'
+        size_hint: (1.24, 1.03)
+        
+
+    MDLabel:
+        text_size: self.size
+        text: "Planting A Tree Is \n Planting A Hope!"
+        text_size: '18dp'
+        halign: 'left'
+        valign: 'middle'
+        color: 1, 1, 1, 1
+        pos_hint:{'center_x':0.7, 'center_y':0.8}
+        size_hint: (1.20, 1.03)
+        font_style: 'H5'
+        bold:True
+    MDFillRoundFlatButton:
+        md_bg_color: 1, 1, 1, 1
+        opacity: 1.0
+        text: "Let's Get Started!"
+        text_color: 10/255, 50/255, 10/255, 1
+        pos_hint: {'center_x':0.5, 'center_y': 0.5}
+        on_release:
+            root.manager.transition.direction = 'left' 
+            root.manager.current='intro'
+    
+<Intro>
+    name:'intro'
+    Image:
+        source: 'plant1.jpg'
+        size_hint: (1.24, 1.03)
+
+    MDToolbar:
+        orientation: 'horizontal'
+        height: 350
+        md_bg_color: 1, 1, 1, 1
+        opacity: 0.9
+        size_hint_x: 1
+        size_hint_y: None
+        spacing: 5
+    MDFloatingActionButton:
+        halign:"center"
+        icon: 'camera'
+        elevation_normal: 12
+        pos_hint:{'center_x':0.3, 'center_y':0.3}
+        theme_text_color: "Custom"
+        icon_color: 0, 1, 0, 1
+        on_release:
+            root.manager.transition.direction = 'left'
+            root.manager.current= 'cam'
+    MDFloatingActionButton:
+        icon: 'image'
+        elevation_normal: 12
+        pos_hint:{'center_x':0.7, 'center_y':0.3}
+        theme_text_color: "Custom"
+        icon_color: 0, 1, 0, 1   
+        on_release:
+            root.manager.transition.direction = 'left'
+            root.manager.current='gal'
+    MDLabel:
+        halign:"center"
+        text: "Select an Option \n to choose an image"
+        text_color: 10/255, 50/255, 10/255, 1
+        font_style:'H5'
+        pos_hint:{'center_x':0.5, 'center_y':0.45}
+    MDFillRoundFlatButton:
+        md_bg_color: 1, 1, 1, 1
+        opacity: 0.9
+        text: "Go Green And Heal The Universe"
+        text_color: 10/255, 50/255, 10/255, 1
+        pos_hint:{'center_x': 0.5, 'center_y': 0.65}
+        
+            
+<Gallery>:
+    name:"gal"
+    id:gal
+    FileChooserListView:
+        canvas.before:
+            Color:
+                rgb: 0.3,0.4,0.5
+            Rectangle:
+                pos: self.pos
+                size: self.size
+        id: filechooser
+        filters:["*.png","*.jpg","*.jpeg"]
+        on_selection:
+            root.manager.MY_GLOBAL=root.name
+            root.manager.img_name=gal.selected(filechooser.selection)
+            root.manager.get_screen('output').ids.img.source=gal.selected(filechooser.selection)
+            root.manager.transition.direction = 'left'
+            root.manager.current='res'
+
+    MDFloatingActionButton:
+        halign:"center"
+        pos_hint:{'center_x':0.5,'center_y':0.15} 
+        icon:'arrow-left'
+        on_release:
+            root.manager.transition.direction = 'right'
+            root.manager.current= "intro"
+    
+
+<CameraClick>
+    name:'cam'
+    FloatLayout:
+        Camera:
+            id:camera
+            resolution: (2560, 1280)
+            keep_ratio:False
+            allow_stretch:True
+            pos_hint:{"center_x":0.5,"center_y":0.5}
+            height:dp(900)
+            width:dp(500)
+            
+        MDFloatingActionButton:
+            pos_hint:{'center_x':0.7,'center_y':0.15} 
+            icon:'camera'
+            on_release:
+                root.manager.MY_GLOBAL=root.name
+                root.manager.img_name=root.take_selfie()
+                root.manager.get_screen('output').ids.img.source=root.take_selfie()
+                root.manager.transition.direction = 'left'
+                root.manager.current='res'
+                opacity:0.1
+
+        MDFloatingActionButton:
+            halign:"center"
+            pos_hint:{'center_x':0.3,'center_y':0.15} 
+            icon:'arrow-left'
+            on_release:
+                root.manager.current='intro'
+                root.manager.transition.direction = 'right'
+
+
+<Output>
+    name:'output'
+    Image:
+        id:img
+        source:None
+        allow_stretch:True
+    MDFloatingActionButton:
+        halign:"center"
+        pos_hint:{'center_x':0.3,'center_y':0.15} 
+        icon:'arrow-left'
+        on_release:
+            img.source=""
+            root.manager.current= root.manager.MY_GLOBAL
+            root.manager.transition.direction = 'right'
+    MDFloatingActionButton:
+        halign:"center"
+        pos_hint:{'center_x':0.7,'center_y':0.15} 
+        icon:'arrow-right'
+        on_release:
+            root.manager.transition.direction = 'left'
+            root.manager.current= "res"
+            
+<Not_Leaf>:
+    name:"not_leaf"
+    MDLabel:
+        halign:"center"
+        text:"Not Leaf\n please try again"
+    MDFloatingActionButton:
+        halign:"center"
+        pos_hint:{'center_x':0.5,'center_y':0.25} 
+        icon:'arrow-left'
+        on_release:
+            root.manager.transition.direction = 'left'
+            root.manager.current= root.manager.MY_GLOBAL
+
+    
+     
+
+<Result>
+    name:'res'
+    id:res
+    BoxLayout:
+        orientation:"vertical"
+        MDLabel:
+            id:title
+            halign: 'left'
+            size_hint_y: None
+            height: self.texture_size[1]
+            text_size: self.width, None
+            padding: 5, 0
+            font_style:"H6"
+            bold:True
+        MDLabel:
+            id:typ
+            halign:"left"
+            size_hint_y: None
+            height: self.texture_size[1]
+            text_size: self.width, None
+            padding: 5, 0
+            font_style:"Subtitle2"
+        Image:
+            id:img
+            size:self.size
+            allow_stretch:True
+            spacing:0
+        ScrollView:
+            GridLayout:
+                cols:1
+                size_hint_y:None
+                height:self.minimum_height
+                spacing:15
+                padding:10
+                MDLabel:
+                    
+                    halign: 'left'
+                    height: self.texture_size[1]
+                    text_size: self.width, None
+                    text:"Symptoms"
+                    font_style:"Subtitle1"
+                    bold:True
+                MDLabel:
+                    id:sym
+                    halign:"left"
+                    size_hint_y: None
+                    height: self.texture_size[1]
+                    text_size: self.width, None
+                    padding: 2, 2
+                    font_style:"Body2"
+                    text_size:self.size
+                MDLabel:
+                    halign: 'left'
+                    height: self.texture_size[1]
+                    text_size: self.width, None
+                    padding: 2, 2
+                    text:"Treatment"
+                    font_style:"Subtitle1"
+                    bold:True
+                MDLabel:
+                    id:treat
+                    halign:"left"
+                    size_hint_y: None
+                    height: self.texture_size[1]
+                    text_size: self.width, None
+                    padding: 2, 2
+                    font_style:"Body2"
+
+        MDFloatingActionButton:
+            icon:'arrow-left'
+            width:"50dp"
+            height:"50dp"
+            pos_hint:{"center_x":0.5}
+            on_release:
+                root.manager.current= root.manager.MY_GLOBAL
+                root.manager.transition.direction = 'right'
+                                
